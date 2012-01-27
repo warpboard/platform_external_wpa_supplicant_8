@@ -1,0 +1,8 @@
+Code-Review+1: Dmitry Shmidt <dimitrysh%android.com@gtempaccount.com>
+Verified+1: Jean-Baptiste Queru <jbq@google.com>
+Code-Review+2: Ying Wang <wangying@android.com>
+Submitted-by: Jean-Baptiste Queru <jbq@google.com>
+Submitted-at: Fri, 27 Jan 2012 07:31:37 -0800
+Reviewed-on: https://android-review.googlesource.com/31152
+Project: platform/external/wpa_supplicant_8
+Branch: refs/heads/master
