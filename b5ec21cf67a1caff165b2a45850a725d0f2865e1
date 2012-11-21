@@ -1,0 +1,8 @@
+Change-Id: Ib5ec21cf67a1caff165b2a45850a725d0f2865e1
+Code-Review+2: Ying Wang <wangying@android.com>
+Verified+1: Ying Wang <wangying@android.com>
+Submitted-by: Ying Wang <wangying@android.com>
+Submitted-at: Wed, 21 Nov 2012 11:44:33 -0800
+Reviewed-on: https://android-review.googlesource.com/46653
+Project: platform/external/wpa_supplicant_8
+Branch: refs/heads/master
