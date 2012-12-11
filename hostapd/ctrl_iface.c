@@ -1032,6 +1032,11 @@ int hostapd_ctrl_iface_init(struct hostapd_data *hapd)
 		return -1;
 	}
 
+	if (chmod(hapd->conf->ctrl_interface, S_IRWXU | S_IRWXG) < 0) {
+		perror("chmod[ctrl_interface]");
+		goto fail;
+	}
+
 	if (os_strlen(hapd->conf->ctrl_interface) + 1 +
 	    os_strlen(hapd->conf->iface) >= sizeof(addr.sun_path))
 		goto fail;
