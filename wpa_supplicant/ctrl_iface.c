@@ -1381,6 +1381,12 @@ static int wpa_supplicant_ctrl_iface_list_networks(
 
 	ssid = wpa_s->conf->ssid;
 	while (ssid) {
+		if (ssid->temporary == 1) {
+			wpa_printf(MSG_INFO, "Ignore the temporary ssid[%s]", wpa_ssid_txt(ssid->ssid, ssid->ssid_len));
+			ssid = ssid->next;
+			continue;
+		}
+
 		ret = os_snprintf(pos, end - pos, "%d\t%s",
 				  ssid->id,
 				  wpa_ssid_txt(ssid->ssid, ssid->ssid_len));

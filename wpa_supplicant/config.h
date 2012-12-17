@@ -788,6 +788,7 @@ int wpa_config_set_cred(struct wpa_cred *cred, const char *var,
 
 struct wpa_config * wpa_config_alloc_empty(const char *ctrl_interface,
 					   const char *driver_param);
+int wpa_config_check_reduplicate(struct wpa_config *config, struct wpa_ssid *ssid);
 #ifndef CONFIG_NO_STDOUT_DEBUG
 void wpa_config_debug_dump_networks(struct wpa_config *config);
 #else /* CONFIG_NO_STDOUT_DEBUG */
