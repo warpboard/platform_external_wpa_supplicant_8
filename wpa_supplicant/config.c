@@ -1924,6 +1924,65 @@ void wpa_config_foreach_network(struct wpa_config *config,
 }
 
 
+int wpa_config_network_compare(struct wpa_ssid *ssid_1, struct wpa_ssid *ssid_2) {
+	if (ssid_1 == NULL || ssid_2 == NULL) {
+		wpa_printf(MSG_ERROR, "wpa_config_network compare failed: Invalid ssid!");
+		return -1;
+	}
+
+	if ((ssid_1->ssid_len == ssid_2->ssid_len) &&
+		(ssid_1->ssid && os_memcmp(ssid_1->ssid, ssid_2->ssid, ssid_1->ssid_len) == 0) &&
+		(ssid_1->ssid && os_memcmp(ssid_1->ssid, ssid_2->ssid, ssid_1->ssid_len) == 0) &&
+		(ssid_1->pairwise_cipher == ssid_2->pairwise_cipher)&&
+		(ssid_1->proto == ssid_2->proto) &&
+		(ssid_1->key_mgmt == ssid_2->key_mgmt) &&
+		(ssid_1->auth_alg == ssid_2->auth_alg) &&
+		(ssid_1->psk_set == ssid_2->psk_set)) {
+		if (ssid_1->key_mgmt == WPA_KEY_MGMT_NONE) {
+			if (0 != os_memcmp(ssid_1->wep_key[ssid_1->wep_tx_keyidx],
+				               ssid_2->wep_key[ssid_2->wep_tx_keyidx],
+				               ssid_1->wep_key_len[ssid_1->wep_tx_keyidx]))
+				return -1;
+		} else if (ssid_1->key_mgmt == WPA_KEY_MGMT_PSK) {
+			if (ssid_1->psk_set == 1) {
+				if ((os_strlen(ssid_1->psk) != os_strlen(ssid_2->psk)) ||
+					(0 != os_memcmp(ssid_1->psk, ssid_2->psk, os_strlen(ssid_1->psk)))){
+					return -1;
+				}
+
+				if (!((ssid_1->passphrase == NULL && ssid_2->passphrase == NULL) ||
+					  ((ssid_1->passphrase != NULL) && (ssid_2->passphrase != NULL) &&
+					  (os_strlen(ssid_1->passphrase) == os_strlen(ssid_2->passphrase)) &&
+					  (0 == os_memcmp(ssid_1->passphrase, ssid_2->passphrase,
+					                  os_strlen(ssid_1->passphrase)))))) {
+					return -1;
+				}
+			}
+		}
+		return 0;
+	} else {
+		return -1;
+	}
+}
+
+
+int wpa_config_check_reduplicate(struct wpa_config *config, struct wpa_ssid *ssid)
+{
+	struct wpa_ssid *tmpssid, *next;
+	int count = 0;
+
+	tmpssid = config->ssid;
+	while (tmpssid) {
+		next = tmpssid->next;
+		if ((tmpssid->temporary == 0) &&
+			(wpa_config_network_compare(ssid, tmpssid) == 0)){
+			return tmpssid->id;
+		}
+		tmpssid = next;
+	}
+	return -1;
+}
+
 /**
  * wpa_config_get_network - Get configured network based on id
  * @config: Configuration data from wpa_config_read()
