@@ -274,19 +274,19 @@ static int wpa_supplicant_wps_cred(void *ctx,
 		os_free(ssid->eap.eap_methods);
 		ssid->eap.eap_methods = NULL;
 		if (!ssid->p2p_group) {
-			ssid->temporary = 0;
 			ssid->bssid_set = 0;
 		}
 		ssid->disabled_until.sec = 0;
 		ssid->disabled_until.usec = 0;
 		ssid->auth_failures = 0;
 	} else {
-		wpa_printf(MSG_DEBUG, "WPS: Create a new network based on the "
+		wpa_printf(MSG_DEBUG, "WPS: Create a new temporary network based on the "
 			   "received credential");
 		ssid = wpa_config_add_network(wpa_s->conf);
 		if (ssid == NULL)
 			return -1;
 		wpas_notify_network_added(wpa_s, ssid);
+		ssid->temporary = 1;
 	}
 
 	wpa_config_set_network_defaults(ssid);
@@ -402,6 +402,33 @@ static int wpa_supplicant_wps_cred(void *ctx,
 	}
 
 	wpas_wps_security_workaround(wpa_s, ssid, cred);
+
+	int redupId = wpa_config_check_reduplicate(wpa_s->conf, ssid);
+	if (redupId >= 0) {
+		wpa_printf(MSG_INFO, "WPS: The ssid[%s] trying to add is reduplicate!"
+			   "Leave it to be temporary.",
+			   wpa_ssid_txt(ssid->ssid, ssid->ssid_len));
+		struct wpa_ssid *redup_ssid = wpa_config_get_network(wpa_s->conf, redupId);
+
+		/* Set the priority to be the highest */
+		if (redup_ssid != NULL) {
+			wpa_printf(MSG_INFO, "WPS: Set the priority of ssid [%s] to be the highest.",
+				   wpa_ssid_txt(redup_ssid->ssid, redup_ssid->ssid_len));
+
+			/* Set the priority to the highest */
+			redup_ssid->priority = wpa_s->conf->pssid[0]->priority + 1;
+		}
+	} else if (!ssid->p2p_group){
+		wpa_printf(MSG_INFO, "WPS: Make the ssid[%s] to be real!",
+			   wpa_ssid_txt(ssid->ssid, ssid->ssid_len));
+		ssid->temporary = 0;
+
+		/* Set the priority to the highest */
+		ssid->priority = wpa_s->conf->pssid[0]->priority + 1;
+	}
+
+	/* Update the priority list */
+	wpa_config_update_prio_list(wpa_s->conf);
 
 #ifndef CONFIG_NO_CONFIG_WRITE
 	if (wpa_s->conf->update_config &&
