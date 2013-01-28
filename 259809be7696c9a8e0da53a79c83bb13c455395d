@@ -1,0 +1,9 @@
+Change-Id: I259809be7696c9a8e0da53a79c83bb13c455395d
+Code-Review+1: Dmitry Shmidt <dimitrysh%android.com@gtempaccount.com>
+Verified+1: Jean-Baptiste Queru <jbq@google.com>
+Code-Review+2: Irfan Sheriff <isheriff@android.com>
+Submitted-by: Jean-Baptiste Queru <jbq@google.com>
+Submitted-at: Mon, 28 Jan 2013 21:26:19 +0000
+Reviewed-on: https://android-review.googlesource.com/50663
+Project: platform/external/wpa_supplicant_8
+Branch: refs/heads/master
