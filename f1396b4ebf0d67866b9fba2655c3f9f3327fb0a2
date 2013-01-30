@@ -1,0 +1,8 @@
+Code-Review+2: Kenny Root <kroot@android.com>
+Verified+1: Deckard Autoverifier <deckard@android.com>
+Code-Review+1: Robert Craig <rpcraig@tycho.ncsc.mil>
+Submitted-by: Kenny Root <kroot@android.com>
+Submitted-at: Wed, 30 Jan 2013 05:47:00 +0000
+Reviewed-on: https://android-review.googlesource.com/46551
+Project: platform/external/wpa_supplicant_8
+Branch: refs/heads/master
