@@ -1347,10 +1347,15 @@ void wpa_supplicant_associate(struct wpa_supplicant *wpa_s,
 		    wpa_bss_get_ie(bss, WLAN_EID_RSN)) &&
 	    wpa_key_mgmt_wpa(ssid->key_mgmt)) {
 		int try_opportunistic;
+#ifdef ANDROID
+		/* Enable OKC for all WPA2 Enterprise SSIDs on Android */
+		try_opportunistic = (ssid->proto & WPA_PROTO_RSN);
+#else
 		try_opportunistic = ssid->proactive_key_caching &&
 			(ssid->proto & WPA_PROTO_RSN);
+#endif
 		if (pmksa_cache_set_current(wpa_s->wpa, NULL, bss->bssid,
-					    wpa_s->current_ssid,
+					    ssid,
 					    try_opportunistic) == 0)
 			eapol_sm_notify_pmkid_attempt(wpa_s->eapol, 1);
 		wpa_ie_len = sizeof(wpa_ie);
