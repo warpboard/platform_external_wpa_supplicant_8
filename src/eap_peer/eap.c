@@ -1332,12 +1332,21 @@ static void eap_peer_sm_tls_event(void *ctx, enum tls_event ev,
 					  hash_hex, data->peer_cert.cert);
 		break;
 	case TLS_ALERT:
-		if (data->alert.is_local)
-			eap_notify_status(sm, "local TLS alert",
+	  if (data->alert.is_local) {
+	    wpa_msg(sm->msg_ctx, MSG_INFO, WPA_EVENT_EAP_TLS_ALERT
+		    "type='local' alert='%s'",
+		    data->alert.description);
+
+	    eap_notify_status(sm, "local TLS alert",
 					  data->alert.description);
-		else
-			eap_notify_status(sm, "remote TLS alert",
-					  data->alert.description);
+	  } else {
+	    wpa_msg(sm->msg_ctx, MSG_INFO, WPA_EVENT_EAP_TLS_ALERT
+		    "type='remote' alert='%s'",
+		    data->alert.description);
+
+	    eap_notify_status(sm, "remote TLS alert",
+			      data->alert.description);
+	  }
 		break;
 	}
 
