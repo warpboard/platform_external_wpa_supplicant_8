@@ -1332,13 +1332,13 @@ static void eap_peer_sm_tls_event(void *ctx, enum tls_event ev,
 					  hash_hex, data->peer_cert.cert);
 		break;
 	case TLS_ALERT:
-		if (data->alert.is_local)
-			eap_notify_status(sm, "local TLS alert",
-					  data->alert.description);
-		else
-			eap_notify_status(sm, "remote TLS alert",
-					  data->alert.description);
-		break;
+	  if (data->alert.is_local)
+	    eap_notify_status(sm, "local TLS alert",
+			      data->alert.description);
+	  else
+	    eap_notify_status(sm, "remote TLS alert",
+			      data->alert.description);
+	  break;
 	}
 
 	os_free(hash_hex);
