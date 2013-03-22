@@ -2496,7 +2496,7 @@ static int ctrl_iface_get_capability_channels(struct wpa_supplicant *wpa_s,
 		default:
 			continue;
 		}
-		ret = os_snprintf(pos, end - pos, "Mode[%s] Channels:", hmode);
+		ret = os_snprintf(pos, end - pos, "Mode[%s] Channels:\n", hmode);
 		if (ret < 0 || ret >= end - pos)
 			return pos - buf;
 		pos += ret;
@@ -2504,7 +2504,9 @@ static int ctrl_iface_get_capability_channels(struct wpa_supplicant *wpa_s,
 		for (i = 0; i < wpa_s->hw.modes[j].num_channels; i++) {
 			if (chnl[i].flag & HOSTAPD_CHAN_DISABLED)
 				continue;
-			ret = os_snprintf(pos, end - pos, " %d", chnl[i].chan);
+			ret = os_snprintf(pos, end - pos, " %d = %d MHz%s\n",
+					  chnl[i].chan, chnl[i].freq,
+					  chnl[i].flag & HOSTAPD_CHAN_NO_IBSS ? " (NO_IBSS)" : "");
 			if (ret < 0 || ret >= end - pos)
 				return pos - buf;
 			pos += ret;
