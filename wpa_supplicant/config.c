@@ -1192,6 +1192,7 @@ static int wpa_config_parse_wep_key(u8 *key, size_t *len, int line,
 		wpa_printf(MSG_ERROR, "Line %d: Invalid WEP key length %u - "
 			   "this network block will be ignored",
 			   line, (unsigned int) *len);
+ 		return -1;
 	}
 	os_memcpy(key, buf, *len);
 	os_free(buf);
