@@ -3847,8 +3847,9 @@ int wpas_p2p_connect(struct wpa_supplicant *wpa_s, const u8 *peer_addr,
 		    ssid->mode != WPAS_MODE_P2P_GO)
 			return -1;
 	}
-
+#ifndef REALTEK_WIFI_VENDOR
 	if (go_intent < 0)
+#endif
 		go_intent = wpa_s->conf->p2p_go_intent;
 
 	if (!auth)
@@ -5160,6 +5161,26 @@ static void wpas_p2p_set_group_idle_timeout(struct wpa_supplicant *wpa_s)
 			   "during provisioning");
 		return;
 	}
+#ifdef REALTEK_WIFI_VENDOR
+
+    timeout = P2P_MAX_CLIENT_IDLE;
+
+    if (wpa_s->current_ssid->mode == WPAS_MODE_INFRA)
+    {
+        if (wpa_s->show_group_started) {
+            wpa_printf(MSG_INFO, "P2P: set P2P group idle timeout to 20s "
+                    "while waiting for initial 4-way handshake to "
+                    "complete");
+
+            timeout = P2P_MAX_CLIENT_IDLE;
+        }
+        else
+        {
+            timeout = 0;
+        }
+    }
+
+#else //REALTEK_WIFI_VENDOR
 #ifndef ANDROID_P2P
 	if (wpa_s->show_group_started) {
 		/*
@@ -5173,6 +5194,7 @@ static void wpas_p2p_set_group_idle_timeout(struct wpa_supplicant *wpa_s)
 			   "complete");
 		return;
 	}
+#endif
 #endif
 
 	wpa_printf(MSG_DEBUG, "P2P: Set P2P group idle timeout to %u seconds",
