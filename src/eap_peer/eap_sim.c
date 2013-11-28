@@ -9,13 +9,17 @@
 #include "includes.h"
 
 #include "common.h"
-#include "pcsc_funcs.h"
 #include "crypto/milenage.h"
 #include "crypto/random.h"
 #include "eap_peer/eap_i.h"
 #include "eap_config.h"
 #include "eap_common/eap_sim_common.h"
 
+#ifdef CONFIG_RILD_FUNCS
+#include "rild_funcs.h"
+#else
+#include "pcsc_funcs.h"
+#endif
 
 struct eap_sim_data {
 	u8 *ver_list;
@@ -144,6 +148,34 @@ static void eap_sim_deinit(struct eap_sm *sm, void *priv)
 	}
 }
 
+#ifdef CONFIG_RILD_FUNCS
+static int eap_sim_gsm_auth(struct eap_sm *sm, struct eap_sim_data *data)
+{
+	struct eap_peer_config *conf;
+	int slotId=-1;
+
+	wpa_printf(MSG_DEBUG, "EAP-SIM: GSM authentication algorithm");
+
+	conf = eap_get_config(sm);
+	if (conf == NULL)
+		return -1;
+	
+	slotId = atoi(conf->sim_slot);
+	if (scard_gsm_auth(slotId, data->rand[0],
+			   data->sres[0], data->kc[0]) ||
+	    scard_gsm_auth(slotId, data->rand[1],
+			   data->sres[1], data->kc[1]) ||
+	    (data->num_chal > 2 &&
+	     scard_gsm_auth(slotId, data->rand[2],
+			    data->sres[2], data->kc[2]))) {
+		wpa_printf(MSG_DEBUG, "EAP-SIM: GSM SIM "
+			   "authentication could not be completed");
+		return -1;
+	}
+	return 0;
+}
+
+#else
 
 static int eap_sim_gsm_auth(struct eap_sm *sm, struct eap_sim_data *data)
 {
@@ -256,6 +288,7 @@ static int eap_sim_gsm_auth(struct eap_sm *sm, struct eap_sim_data *data)
 #endif /* CONFIG_SIM_HARDCODED */
 }
 
+#endif //CONFIG_EAP_SIM_AKA_RILD
 
 static int eap_sim_supported_ver(int version)
 {

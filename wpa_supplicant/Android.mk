@@ -236,7 +236,7 @@ NEED_SHA1=y
 NEED_MD5=y
 NEED_RC4=y
 else
-L_CFLAGS += -DCONFIG_NO_WPA
+L_CFLAGS += -DCONFIG_NO_WPA -DCONFIG_NO_WPA2
 endif
 
 ifdef CONFIG_IBSS_RSN
@@ -284,6 +284,10 @@ ifdef CONFIG_INTERWORKING
 OBJS += interworking.c
 L_CFLAGS += -DCONFIG_INTERWORKING
 NEED_GAS=y
+endif
+
+ifdef CONFIG_NO_WPA2
+L_CFLAGS += -DCONFIG_NO_WPA2
 endif
 
 include $(LOCAL_PATH)/src/drivers/drivers.mk
@@ -597,22 +601,6 @@ CONFIG_IEEE8021X_EAPOL=y
 NEED_SHA256=y
 endif
 
-ifdef CONFIG_EAP_EKE
-# EAP-EKE
-ifeq ($(CONFIG_EAP_EKE), dyn)
-L_CFLAGS += -DEAP_EKE_DYNAMIC
-EAPDYN += src/eap_peer/eap_eke.so
-else
-L_CFLAGS += -DEAP_EKE
-OBJS += src/eap_peer/eap_eke.c src/eap_common/eap_eke_common.c
-OBJS_h += src/eap_server/eap_server_eke.c
-endif
-CONFIG_IEEE8021X_EAPOL=y
-NEED_DH_GROUPS=y
-NEED_DH_GROUPS_ALL=y
-NEED_SHA256=y
-endif
-
 ifdef CONFIG_WPS
 ifdef CONFIG_WPS2
 L_CFLAGS += -DCONFIG_WPS2
@@ -865,7 +853,15 @@ ifdef CONFIG_NATIVE_WINDOWS
 else
 LIBS += -lpcsclite -lpthread
 endif
-endif
+else #CONFIG_PCSC
+ifdef CONFIG_RILD
+L_CFLAGS += -DCONFIG_RILD_FUNCS
+OBJS += src/utils/rild_funcs.c
+ifdef CONFIG_RILD_MULTI_SIM #multiple sim card support, for example dual sim card
+L_CFLAGS += -DCONFIG_RILD_FUNCS_MULTI_SIM
+endif #CONFIG_RILD_MULTI_SIM
+endif #CONFIG_RILD
+endif #CONFIG_PCSC
 
 ifdef CONFIG_SIM_SIMULATOR
 L_CFLAGS += -DCONFIG_SIM_SIMULATOR
