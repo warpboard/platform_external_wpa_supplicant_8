@@ -16,7 +16,6 @@
 #include "l2_packet/l2_packet.h"
 #include "wpa_supplicant_i.h"
 #include "driver_i.h"
-#include "pcsc_funcs.h"
 #include "rsn_supp/preauth.h"
 #include "rsn_supp/pmksa_cache.h"
 #include "common/wpa_ctrl.h"
@@ -42,6 +41,11 @@
 #include "scan.h"
 #include "offchannel.h"
 #include "interworking.h"
+#ifdef CONFIG_RILD_FUNCS
+#include "rild_funcs.h"
+#else
+#include "pcsc_funcs.h"
+#endif
 
 
 #ifndef CONFIG_NO_SCAN_PROCESSING

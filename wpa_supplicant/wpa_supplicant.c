@@ -27,7 +27,6 @@
 #include "wpa_supplicant_i.h"
 #include "driver_i.h"
 #include "ctrl_iface.h"
-#include "pcsc_funcs.h"
 #include "common/version.h"
 #include "rsn_supp/preauth.h"
 #include "rsn_supp/pmksa_cache.h"
@@ -50,6 +49,11 @@
 #include "scan.h"
 #include "offchannel.h"
 #include "hs20_supplicant.h"
+#ifdef CONFIG_RILD_FUNCS
+#include "rild_funcs.h"
+#else
+#include "pcsc_funcs.h"
+#endif
 #include "wnm_sta.h"
 
 const char *wpa_supplicant_version =

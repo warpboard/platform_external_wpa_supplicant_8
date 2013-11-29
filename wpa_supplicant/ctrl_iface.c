@@ -2367,6 +2367,14 @@ static int wpa_supplicant_ctrl_iface_set_network(
 		return -1;
 	}
 
+#ifdef CONFIG_RILD_FUNCS
+	if (os_strcmp(name, "eap") == 0) {
+		wpa_printf(MSG_DEBUG, "eap method has been reconfigured, clear anonymous_identity");
+		if(wpa_config_set(ssid, "anonymous_identity", "NULL", 0) < 0) {
+					wpa_printf(MSG_DEBUG, "CTRL_IFACE: Failed to set network variable 'anonymous_identity'");
+		}
+	}
+#endif
 	if (wpa_config_set(ssid, name, value, 0) < 0) {
 		wpa_printf(MSG_DEBUG, "CTRL_IFACE: Failed to set network "
 			   "variable '%s'", name);

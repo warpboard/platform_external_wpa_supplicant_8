@@ -1130,6 +1130,14 @@ struct wpabuf * eap_sm_buildIdentity(struct eap_sm *sm, int id, int encrypted)
 		identity_len = config->anonymous_identity_len;
 		wpa_hexdump_ascii(MSG_DEBUG, "EAP: using anonymous identity",
 				  identity, identity_len);
+#ifdef CONFIG_RILD_FUNCS
+	} else if (config->imsi && (eap_allowed_method(sm, EAP_VENDOR_IETF, EAP_TYPE_SIM)
+								|| eap_allowed_method(sm, EAP_VENDOR_IETF, EAP_TYPE_AKA))) {
+		identity = config->imsi;
+		identity_len = config->imsi_len;
+		wpa_hexdump_ascii(MSG_DEBUG, "permanent identity from "
+					  "IMSI", identity, identity_len);
+#endif
 	} else {
 		identity = config->identity;
 		identity_len = config->identity_len;
@@ -1949,6 +1957,13 @@ const u8 * eap_get_config_identity(struct eap_sm *sm, size_t *len)
 	struct eap_peer_config *config = eap_get_config(sm);
 	if (config == NULL)
 		return NULL;
+#ifdef CONFIG_RILD_FUNCS
+	if (config->imsi && (eap_allowed_method(sm, EAP_VENDOR_IETF, EAP_TYPE_SIM)
+								|| eap_allowed_method(sm, EAP_VENDOR_IETF, EAP_TYPE_AKA))) {
+		*len = config->imsi_len;
+		return config->imsi;
+	}
+#endif
 	*len = config->identity_len;
 	return config->identity;
 }

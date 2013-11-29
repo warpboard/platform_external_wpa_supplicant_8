@@ -9,7 +9,6 @@
 #include "includes.h"
 
 #include "common.h"
-#include "pcsc_funcs.h"
 #include "crypto/crypto.h"
 #include "crypto/sha1.h"
 #include "crypto/sha256.h"
@@ -18,6 +17,11 @@
 #include "eap_config.h"
 #include "eap_i.h"
 
+#ifdef CONFIG_RILD_FUNCS
+#include "rild_funcs.h"
+#else
+#include "pcsc_funcs.h"
+#endif
 
 struct eap_aka_data {
 	u8 ik[EAP_AKA_IK_LEN], ck[EAP_AKA_CK_LEN], res[EAP_AKA_RES_MAX_LEN];
@@ -141,6 +145,26 @@ static void eap_aka_deinit(struct eap_sm *sm, void *priv)
 	}
 }
 
+#ifdef CONFIG_RILD_FUNCS
+static int eap_aka_umts_auth(struct eap_sm *sm, struct eap_aka_data *data)
+{
+	struct eap_peer_config *conf;
+	struct wpa_supplicant *wpa_s = sm->msg_ctx;
+	int slotId=-1;
+
+	wpa_printf(MSG_DEBUG, "EAP-AKA: UMTS authentication algorithm");
+
+	conf = eap_get_config(sm);
+	if (conf == NULL)
+		return -1;
+	
+	slotId = atoi(conf->sim_slot);
+	return scard_umts_auth(slotId, data->rand,
+			       data->autn, data->res, &data->res_len,
+			       data->ik, data->ck, data->auts);
+}
+
+#else
 
 static int eap_aka_umts_auth(struct eap_sm *sm, struct eap_aka_data *data)
 {
@@ -232,6 +256,7 @@ static int eap_aka_umts_auth(struct eap_sm *sm, struct eap_aka_data *data)
 #endif /* CONFIG_USIM_HARDCODED */
 }
 
+#endif //CONFIG_EAP_SIM_AKA_RILD
 
 #define CLEAR_PSEUDONYM	0x01
 #define CLEAR_REAUTH_ID	0x02
