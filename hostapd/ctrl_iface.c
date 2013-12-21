@@ -1579,21 +1579,40 @@ static void hostapd_ctrl_iface_send(struct hostapd_data *hapd, int level,
 	struct wpa_ctrl_dst *dst, *next;
 	struct msghdr msg;
 	int idx;
-	struct iovec io[2];
+	struct iovec io[5];
 	char levelstr[10];
+	const char *ifname = NULL;
 
 	dst = hapd->ctrl_dst;
 	if (hapd->ctrl_sock < 0 || dst == NULL)
 		return;
 
+	if (hapd && hapd->iconf && hapd->iconf->bss)
+		ifname = hapd->iconf->bss->iface;
+
+	idx = 0;
+
 	os_snprintf(levelstr, sizeof(levelstr), "<%d>", level);
-	io[0].iov_base = levelstr;
-	io[0].iov_len = os_strlen(levelstr);
-	io[1].iov_base = (char *) buf;
-	io[1].iov_len = len;
+	if (ifname) {
+		io[idx].iov_base = "IFNAME=";
+		io[idx].iov_len = 7;
+		idx++;
+		io[idx].iov_base = (char *) ifname;
+		io[idx].iov_len = os_strlen(ifname);
+		idx++;
+		io[idx].iov_base = " ";
+		io[idx].iov_len = 1;
+		idx++;
+	}
+	io[idx].iov_base = levelstr;
+	io[idx].iov_len = os_strlen(levelstr);
+	idx++;
+	io[idx].iov_base = (char *) buf;
+	io[idx].iov_len = len;
+	idx++;
 	os_memset(&msg, 0, sizeof(msg));
 	msg.msg_iov = io;
-	msg.msg_iovlen = 2;
+	msg.msg_iovlen = idx;
 
 	idx = 0;
 	while (dst) {
