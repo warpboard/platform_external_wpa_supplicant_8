@@ -17,7 +17,7 @@
 #include "p2p_supplicant.h"
 
 extern struct wpa_driver_ops *wpa_drivers[];
-
+//
 
 static void usage(void)
 {
