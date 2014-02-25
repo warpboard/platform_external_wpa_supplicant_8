@@ -1,0 +1,7 @@
+Code-Review+2: JP Abgrall <jpa@google.com>
+Verified+1: Dmitry Shmidt <dimitrysh%android.com@gtempaccount.com>
+Submitted-by: Dmitry Shmidt <dimitrysh%android.com@gtempaccount.com>
+Submitted-at: Tue, 25 Feb 2014 20:01:22 +0000
+Reviewed-on: https://android-review.googlesource.com/83272
+Project: platform/external/wpa_supplicant_8
+Branch: refs/heads/master
