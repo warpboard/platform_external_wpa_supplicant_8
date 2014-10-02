@@ -1536,8 +1536,8 @@ LOCAL_MODULE := wpa_supplicant
 ifdef CONFIG_DRIVER_CUSTOM
 LOCAL_STATIC_LIBRARIES := libCustomWifi
 endif
-ifneq ($(BOARD_WPA_SUPPLICANT_PRIVATE_LIB_QCOM),)
-LOCAL_STATIC_LIBRARIES += $(BOARD_WPA_SUPPLICANT_PRIVATE_LIB_QCOM)
+ifneq ($(BOARD_WPA_SUPPLICANT_PRIVATE_LIB),)
+LOCAL_STATIC_LIBRARIES += $(BOARD_WPA_SUPPLICANT_PRIVATE_LIB)
 endif
 LOCAL_SHARED_LIBRARIES := libc libcutils liblog
 ifeq ($(CONFIG_TLS), openssl)
@@ -1551,27 +1551,27 @@ LOCAL_SRC_FILES := $(OBJS)
 LOCAL_C_INCLUDES := $(INCLUDES)
 include $(BUILD_EXECUTABLE)
 
-########################
-include $(CLEAR_VARS)
-LOCAL_MODULE := rtl_wpa_supplicant
-ifdef CONFIG_DRIVER_CUSTOM
-LOCAL_STATIC_LIBRARIES := libCustomWifi
-endif
-ifneq ($(BOARD_WPA_SUPPLICANT_PRIVATE_LIB_RTL),)
-LOCAL_STATIC_LIBRARIES += $(BOARD_WPA_SUPPLICANT_PRIVATE_LIB_RTL)
-endif
-LOCAL_SHARED_LIBRARIES := libc libcutils liblog
-ifeq ($(CONFIG_TLS), openssl)
-LOCAL_SHARED_LIBRARIES += libcrypto libssl libkeystore_binder
-endif
-ifdef CONFIG_DRIVER_NL80211
-LOCAL_STATIC_LIBRARIES += libnl_2
-endif
-LOCAL_CFLAGS := $(L_CFLAGS)
-LOCAL_CFLAGS += -DREALTEK_WIFI_VENDOR
-LOCAL_SRC_FILES := $(OBJS)
-LOCAL_C_INCLUDES := $(INCLUDES)
-include $(BUILD_EXECUTABLE)
+########################  ---  MODIFICATION: do not compile/link RTL WPA Supplicant.
+#include $(CLEAR_VARS)
+#LOCAL_MODULE := rtl_wpa_supplicant
+#ifdef CONFIG_DRIVER_CUSTOM
+#LOCAL_STATIC_LIBRARIES := libCustomWifi
+#endif
+#ifneq ($(BOARD_WPA_SUPPLICANT_PRIVATE_LIB_RTL),)
+#LOCAL_STATIC_LIBRARIES += $(BOARD_WPA_SUPPLICANT_PRIVATE_LIB_RTL)
+#endif
+#LOCAL_SHARED_LIBRARIES := libc libcutils liblog
+#ifeq ($(CONFIG_TLS), openssl)
+#LOCAL_SHARED_LIBRARIES += libcrypto libssl libkeystore_binder
+#endif
+#ifdef CONFIG_DRIVER_NL80211
+#LOCAL_STATIC_LIBRARIES += libnl_2
+#endif
+#LOCAL_CFLAGS := $(L_CFLAGS)
+#LOCAL_CFLAGS += -DREALTEK_WIFI_VENDOR
+#LOCAL_SRC_FILES := $(OBJS)
+#LOCAL_C_INCLUDES := $(INCLUDES)
+#include $(BUILD_EXECUTABLE)
 
 ########################
 #
